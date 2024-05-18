@@ -1,11 +1,12 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import FormContainer from "../components/FormContainer";
 import AppIcon from "../components/AppIcon";
-import { ToastContainer, toast, ToastOptions } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { RegisterRoute } from "../utils/ApiRoute";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { toastOptions } from "../utils/ToastOptions";
 
 const inputClass = `outline-none w-full hover:ring ring-sky-300 rounded-md border-2 border-gray-300 px-2 py-1 my-2`;
 
@@ -26,13 +27,14 @@ const RegisterPage = () => {
 
   const navigate = useNavigate();
 
-  const toastOptions: ToastOptions = {
-    position: "bottom-right",
-    autoClose: 8000,
-    pauseOnHover: true,
-    draggable: true,
-    theme: "dark",
-  };
+  useEffect(() => {
+    const user = localStorage.getItem("chat-app-user");
+    if (user) {
+      navigate("/");
+    } else {
+      console.log("at register page");
+    }
+  }, [navigate]);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;

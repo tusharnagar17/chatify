@@ -1,11 +1,13 @@
-import React from "react";
+import React, { useEffect } from "react";
 import FormContainer from "../components/FormContainer";
 import AppIcon from "../components/AppIcon";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { LoginRoute } from "../utils/ApiRoute";
 import axios from "axios";
-import { toast, ToastContainer, ToastOptions } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
+import { toastOptions } from "../utils/ToastOptions";
+
 const inputClass = `outline-none w-full hover:ring ring-sky-300 rounded-md border-2 border-gray-300 px-2 py-1 my-2`;
 
 const LoginPage = () => {
@@ -16,13 +18,14 @@ const LoginPage = () => {
 
   const navigate = useNavigate();
 
-  const toastOptions: ToastOptions = {
-    position: "bottom-right",
-    autoClose: 8000,
-    pauseOnHover: true,
-    draggable: true,
-    theme: "dark",
-  };
+  useEffect(() => {
+    const user = localStorage.getItem("chat-app-user");
+    if (user) {
+      navigate("/");
+    } else {
+      console.log("at login page");
+    }
+  }, [navigate]);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -63,6 +66,7 @@ const LoginPage = () => {
       }
       if (data?.status == true) {
         toast.info(data?.message, toastOptions);
+        await localStorage.setItem("chat-app-user", data?.user);
         navigate("/");
       }
       console.log("login data", data);

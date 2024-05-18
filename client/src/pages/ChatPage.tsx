@@ -1,7 +1,13 @@
 import React, { useEffect } from "react";
-import { redirect, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const ChatPage = () => {
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (!localStorage.getItem("chat-app-user")) {
+      navigate("/login");
+    }
+  }, [navigate]);
   return <div>ChatPage</div>;
 };
 

@@ -6,10 +6,12 @@ import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import RegisterPage from "./pages/RegisterPage.tsx";
 import LoginPage from "./pages/LoginPage.tsx";
 import ChatPage from "./pages/ChatPage.tsx";
+import SetAvatarPage from "./pages/SetAvatarPage.tsx";
 
 const router = createBrowserRouter([
   { path: "/", element: <ChatPage /> },
   { path: "/register", element: <RegisterPage /> },
+  { path: "/setAvatar", element: <SetAvatarPage /> },
   { path: "/login", element: <LoginPage /> },
 ]);
 

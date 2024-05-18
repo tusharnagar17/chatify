@@ -60,3 +60,20 @@ export const register = async (req, res, next) => {
         next(error)
     }
 }
+
+export const setAvatar = async (req, res, next) => {
+    try {
+        const userId = req.params.id
+        const image = req.body.image
+
+        const userData = await User.findByIdAndUpdate(userId, {
+            avatarImage: image,
+            isAvatarImageSet: true
+        })
+
+    return res.json({isSet: userData?.isAvatarImageSet, image: userData?.avatarImage })
+        
+    } catch (error) {
+        next(error)
+    }
+}
