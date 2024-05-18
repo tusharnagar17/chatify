@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import FormContainer from "../components/FormContainer";
 import axios from "axios";
 import { Buffer } from "buffer";
@@ -38,7 +38,7 @@ const SetAvatarPage = () => {
       }
     };
 
-    // makeAvatar();
+    makeAvatar();
   }, []);
 
   const SetAvatarServer = async () => {
@@ -55,6 +55,7 @@ const SetAvatarPage = () => {
       if (data?.isSet) {
         user.isAvatarImageSet = true;
         user.avatarImage = data.image;
+        console.log("avatar page", user);
         localStorage.setItem("chat-app-user", JSON.stringify(user));
         navigate("/");
       } else {

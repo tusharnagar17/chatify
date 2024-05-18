@@ -1,4 +1,6 @@
 /** @type {import('tailwindcss').Config} */
+import tailwindScrollBar from "tailwind-scrollbar"
+
 export default {
   content: [
     "./index.html",
@@ -17,7 +19,9 @@ export default {
 
       },
   },
-  plugins: [],
+  plugins: [
+    tailwindScrollBar({ nocompitale: true,  preferredStrategy: 'pseudoelements' })
+  ]
 }
 }
 

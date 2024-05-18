@@ -15,11 +15,16 @@ export const login = async (req, res, next) => {
 
         if(hashedPassword && emailCheck){
             
-            return res.json({status: true , message: "Email and password match"})
+            return res.json({status: true , message: "Email and password match", user: {
+                avatarImage: emailCheck.avatarImage,
+                isAvatarImageSet: emailCheck.isAvatarImageSet,
+                username: emailCheck.username,
+                _id:emailCheck._id,
+            }})
 
         }else{
             
-            return res.json({status: false, message: "Incorrect Email I'd password"})
+            return res.json({status: false, message: "Incorrect Email and Password!"})
         }
     } catch (error) {
         next(error)
@@ -44,8 +49,7 @@ export const register = async (req, res, next) => {
             return res.json({status: false , message: "Email already exists!"})
         }
 
-        
-
+    
         const hashedPassword = await bcrypt.hash(password, 10);
         const newUser = await User.create({
             username, email, password: hashedPassword
@@ -53,9 +57,8 @@ export const register = async (req, res, next) => {
         const userResponse = {
             id: newUser.id,
             username: newUser.username,
-            email: newUser.email
         }
-        return res.json({status: true, user: userResponse, message: "Successfully created account!"})
+        return res.json({status: true, user: newUser, message: "Successfully created account!"})
     } catch (error) {
         next(error)
     }
@@ -70,7 +73,7 @@ export const setAvatar = async (req, res, next) => {
             avatarImage: image,
             isAvatarImageSet: true
         })
-
+        console.log(userData)
     return res.json({isSet: userData?.isAvatarImageSet, image: userData?.avatarImage })
         
     } catch (error) {

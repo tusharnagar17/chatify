@@ -28,13 +28,16 @@ const RegisterPage = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const user = localStorage.getItem("chat-app-user");
-    if (user) {
-      navigate("/");
-    } else {
-      console.log("at register page");
-    }
-  }, [navigate]);
+    const RedirectMainPage = () => {
+      const user = localStorage.getItem("chat-app-user");
+      if (user) {
+        navigate("/");
+      } else {
+        console.log("at register page");
+      }
+    };
+    RedirectMainPage();
+  }, []);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -82,10 +85,12 @@ const RegisterPage = () => {
         email,
         password,
       });
+      console.log("data", data);
       if (data?.status === true) {
-        await localStorage.setItem("chat-app-user", data?.user);
+        console.log("data.user", data.user);
+        await localStorage.setItem("chat-app-user", JSON.stringify(data?.user));
         toast.info(data?.message, toastOptions);
-        navigate("/login");
+        // navigate("/login");
       }
       if (data?.status === false) {
         toast.error(data?.message, toastOptions);
@@ -108,21 +113,21 @@ const RegisterPage = () => {
             className={inputClass}
           />
           <input
-            type="text"
+            type="email"
             name="email"
             placeholder="Email"
             onChange={handleChange}
             className={inputClass}
           />
           <input
-            type="text"
+            type="password"
             name="password"
             placeholder="Password"
             onChange={handleChange}
             className={inputClass}
           />
           <input
-            type="text"
+            type="password"
             name="confirmPassword"
             placeholder="Confirm Password"
             onChange={handleChange}

@@ -19,7 +19,7 @@ app.use(express.json())
 
 // mongoose setup
 mongoose.connect(uri).then(()=> {
-  console.log("successfully connected",)
+  console.log("Connetec to MongoDB",)
 }).catch(error => {console.log("mongoose connection failed!", error)})
 
 

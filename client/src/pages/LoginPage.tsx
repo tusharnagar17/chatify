@@ -19,13 +19,16 @@ const LoginPage = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const user = localStorage.getItem("chat-app-user");
-    if (user) {
-      navigate("/");
-    } else {
-      console.log("at login page");
-    }
-  }, [navigate]);
+    const RedirectMainPage = () => {
+      const user = localStorage.getItem("chat-app-user");
+      if (user) {
+        navigate("/");
+      } else {
+        console.log("enable to redirect");
+      }
+    };
+    RedirectMainPage();
+  }, []);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -66,10 +69,9 @@ const LoginPage = () => {
       }
       if (data?.status == true) {
         toast.info(data?.message, toastOptions);
-        await localStorage.setItem("chat-app-user", data?.user);
+        await localStorage.setItem("chat-app-user", JSON.stringify(data?.user));
         navigate("/");
       }
-      console.log("login data", data);
     }
   };
 
@@ -85,14 +87,14 @@ const LoginPage = () => {
 
           {/* Login form */}
           <input
-            type="text"
+            type="email"
             name="email"
             placeholder="Email"
             onChange={handleChange}
             className={inputClass}
           />
           <input
-            type="text"
+            type="password"
             name="password"
             placeholder="Password"
             onChange={handleChange}
