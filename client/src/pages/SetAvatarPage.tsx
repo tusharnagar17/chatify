@@ -9,7 +9,7 @@ import { useNavigate } from "react-router-dom";
 
 const SetAvatarPage = () => {
   const [isLoading, setIsLoading] = useState(true);
-  const [avatar, setAvatar] = useState([]);
+  const [avatar, setAvatar] = useState<string[]>([]);
   const [selectedAvatar, setSelectedAvatar] = useState<undefined | number>(
     undefined
   );
@@ -19,7 +19,7 @@ const SetAvatarPage = () => {
   const apiKey = "4DAGKFQOHSnbtf";
 
   useEffect(() => {
-    const data = [];
+    const data: string[] = [];
     const makeAvatar = async () => {
       try {
         for (let i = 0; i < 4; i++) {
@@ -52,11 +52,9 @@ const SetAvatarPage = () => {
         image: avatar[selectedAvatar],
       });
 
-      if (data?.isSet) {
-        user.isAvatarImageSet = true;
-        user.avatarImage = data.image;
+      if (data?.status) {
         console.log("avatar page", user);
-        localStorage.setItem("chat-app-user", JSON.stringify(user));
+        localStorage.setItem("chat-app-user", JSON.stringify(data?.user));
         navigate("/");
       } else {
         toast.error("Error setting avatar. Please try again!", toastOptions);

@@ -1,6 +1,8 @@
 import { Request, Response, NextFunction } from "express";
 import User from "../model/userModel"
 import bcrypt from "bcrypt"
+import mongoose from "mongoose";
+
 
 export const login = async (req, res, next) => {
     try {
@@ -14,13 +16,10 @@ export const login = async (req, res, next) => {
         
 
         if(hashedPassword && emailCheck){
+
+            const userResponse = await User.findById(emailCheck._id).select("username _id avatarImage isAvatarImageSet")
             
-            return res.json({status: true , message: "Email and password match", user: {
-                avatarImage: emailCheck.avatarImage,
-                isAvatarImageSet: emailCheck.isAvatarImageSet,
-                username: emailCheck.username,
-                _id:emailCheck._id,
-            }})
+            return res.json({status: true , message: "Email and password match", user: userResponse})
 
         }else{
             
@@ -54,11 +53,9 @@ export const register = async (req, res, next) => {
         const newUser = await User.create({
             username, email, password: hashedPassword
         })
-        const userResponse = {
-            id: newUser.id,
-            username: newUser.username,
-        }
-        return res.json({status: true, user: newUser, message: "Successfully created account!"})
+        const userResponse = await User.findById(newUser?._id).select("username _id avatarImage isAvatarImageSet")
+       
+        return res.json({status: true, user: userResponse, message: "Successfully created account!"})
     } catch (error) {
         next(error)
     }
@@ -72,11 +69,31 @@ export const setAvatar = async (req, res, next) => {
         const userData = await User.findByIdAndUpdate(userId, {
             avatarImage: image,
             isAvatarImageSet: true
-        })
-        console.log(userData)
-    return res.json({isSet: userData?.isAvatarImageSet, image: userData?.avatarImage })
+        }, {new:true})
+        const userResponse = await User.findById(userData?._id).select("username _id avatarImage isAvatarImageSet")
+        console.log("while setting avatar",userResponse)
+    return res.json({ status: true, user: userResponse })
         
     } catch (error) {
         next(error)
     }
 }
+
+export const getAllUsers = async (req, res, next) => {
+    try {
+        const userId = mongoose.Types.ObjectId.createFromHexString(req.params.id)
+        
+        const AllUserData = await User.find({_id: {$ne: userId}}).select([
+            "username",
+            "email",
+            "avatarImage",
+            "_id"
+        ])
+
+        console.log("AllUserData",AllUserData)
+        return res.json({status: true, user: AllUserData})
+
+    } catch (error) {
+        next(error)
+    }
+    }

@@ -8,21 +8,19 @@ import { AllUsersRoute } from "../utils/ApiRoute";
 
 const ChatPage = () => {
   const navigate = useNavigate();
-  const [contact, setContact] = useState([]);
-  const [currenctChat, setCurrectChat] = useState(true);
+  const [contacts, setContacts] = useState([]);
+  const [currentChat, setCurrentChat] = useState(undefined);
   const [currentUser, setCurrentUser] = useState(undefined);
 
   useEffect(() => {
     const fetchCurrentUser = async () => {
       const userString = localStorage.getItem("chat-app-user");
 
-      if (!userString == true) {
+      if (!userString) {
         navigate("/login");
       } else {
-        const user = JSON.parse(userString);
-        setCurrentUser(
-          await JSON.parse(localStorage.getItem("chat-app-user") || "")
-        );
+        const user = await JSON.parse(userString);
+        setCurrentUser(user);
       }
     };
     fetchCurrentUser();
@@ -30,13 +28,15 @@ const ChatPage = () => {
 
   useEffect(() => {
     const CheckAvatar = async () => {
+      console.log("currentUser", currentUser);
+
       if (currentUser) {
-        if (currentUser.isAvatarImageSet) {
+        if (currentUser?.isAvatarImageSet) {
           const response = await axios.get(
-            `${AllUsersRoute}/${currenctChat._id}`
+            `${AllUsersRoute}/${currentUser?._id}`
           );
-          // setContact(response.data);
-          console.log("response data");
+
+          setContacts(response.data.user);
         } else {
           navigate("/setAvatar");
         }
@@ -45,14 +45,25 @@ const ChatPage = () => {
     CheckAvatar();
   }, [currentUser]);
 
+  const handleChatChange = (chat) => {
+    setCurrentChat(chat);
+  };
+
   return (
     <div className="flex justify-center items-center  h-screen bg-back">
       <div className="flex items-center justify-start gap-10 text-white  m-2 rounded-3xl p-1 md:p-10 md:w-11/12 bg-front">
         {/* Sidebar */}
-        <Contacts />
+        <Contacts contacts={contacts} changeChat={handleChatChange} />
         {/* Chat Bar */}
         <div className="md:w-1/3 rounded-xl">
-          {currenctChat === undefined ? <Welcome /> : <ChatContainer />}
+          {currentChat === undefined ? (
+            <Welcome />
+          ) : (
+            <ChatContainer
+              currentChat={currentChat}
+              currentUser={currentUser}
+            />
+          )}
         </div>
       </div>
     </div>

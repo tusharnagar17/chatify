@@ -1,13 +1,14 @@
 import express from 'express';
 import cors from "cors"
 import dotenv from "dotenv"
-import mongoose, { ConnectOptions } from 'mongoose';
+import mongoose from 'mongoose';
 const app = express();
 
 dotenv.config()
 
 // ROUTES
 import authRoute from "../routes/authRoute"
+import messageRoute from "../routes/messageRoute"
 
 const port = process.env.PORT;
 const uri: string = process.env.MONGO_URL || ""
@@ -28,6 +29,8 @@ app.get('/ping', (req, res) => {
 });
 
 app.use("/api/auth", authRoute)
+app.use("/api/message", messageRoute )
+
 
 app.listen(port, () => {
   console.log(`Server is running at http://localhost:${port}`);

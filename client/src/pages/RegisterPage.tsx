@@ -30,7 +30,7 @@ const RegisterPage = () => {
   useEffect(() => {
     const RedirectMainPage = () => {
       const user = localStorage.getItem("chat-app-user");
-      if (user) {
+      if (!user == false) {
         navigate("/");
       } else {
         console.log("at register page");
@@ -87,10 +87,9 @@ const RegisterPage = () => {
       });
       console.log("data", data);
       if (data?.status === true) {
-        console.log("data.user", data.user);
         await localStorage.setItem("chat-app-user", JSON.stringify(data?.user));
         toast.info(data?.message, toastOptions);
-        // navigate("/login");
+        navigate("/login");
       }
       if (data?.status === false) {
         toast.error(data?.message, toastOptions);

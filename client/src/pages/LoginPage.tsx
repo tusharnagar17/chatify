@@ -21,10 +21,10 @@ const LoginPage = () => {
   useEffect(() => {
     const RedirectMainPage = () => {
       const user = localStorage.getItem("chat-app-user");
-      if (user) {
+      if (!user == false) {
         navigate("/");
       } else {
-        console.log("enable to redirect");
+        console.log("unable to redirect");
       }
     };
     RedirectMainPage();
