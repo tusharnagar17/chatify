@@ -12,12 +12,16 @@ const ChatInput = ({ sendMessage }) => {
     message += emojiData?.emoji;
     setMsg(message);
   };
-  const ChatSendMessage = () => {
+  const ChatSendMessage = (e) => {
+    e.preventDefault();
     sendMessage(msg);
     setMsg("");
   };
   return (
-    <div className="relative flex justify-around gap-2 items-center w-100">
+    <form
+      onSubmit={ChatSendMessage}
+      className="relative flex justify-around gap-2 items-center w-100"
+    >
       <div>
         <BsEmojiSmileFill
           className="text-yellow-200"
@@ -43,10 +47,10 @@ const ChatInput = ({ sendMessage }) => {
           className="bg-back px-10 py-2 md:w-[45vw] rounded-full text-lg"
         />
       </div>
-      <div className="bg-violet-500 px-6 py-2 rounded-full">
-        <IoMdSend size={20} onClick={ChatSendMessage} />
-      </div>
-    </div>
+      <button className="bg-violet-500 px-6 py-2 rounded-full" type="submit">
+        <IoMdSend size={20} />
+      </button>
+    </form>
   );
 };
 

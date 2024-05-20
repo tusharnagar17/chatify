@@ -7,8 +7,6 @@ import mongoose from "mongoose";
 export const login = async (req, res, next) => {
     try {
         const {email, password} = req.body;
-        console.log("login with email and password")
-        console.log(email, password)
         
         const emailCheck = await User.findOne({email}) 
         
@@ -34,8 +32,6 @@ export const login = async (req, res, next) => {
 export const register = async (req, res, next) => {
     try {
         const {username, email, password} = req.body;
-        console.log("Get username , email and password")
-        console.log(username, email, password)
         // check duplicate username
         const usernameCheck = await User.findOne({username})
 
@@ -71,7 +67,6 @@ export const setAvatar = async (req, res, next) => {
             isAvatarImageSet: true
         }, {new:true})
         const userResponse = await User.findById(userData?._id).select("username _id avatarImage isAvatarImageSet")
-        console.log("while setting avatar",userResponse)
     return res.json({ status: true, user: userResponse })
         
     } catch (error) {
@@ -90,7 +85,6 @@ export const getAllUsers = async (req, res, next) => {
             "_id"
         ])
 
-        console.log("AllUserData",AllUserData)
         return res.json({status: true, user: AllUserData})
 
     } catch (error) {

@@ -1,32 +1,42 @@
-import React, { useEffect, useState } from "react";
+import React, { RefObject, useEffect, useRef, useState } from "react";
 import ChatInput from "./ChatInput";
 import axios from "axios";
 import { AllMessageRoute, SendMessageRoute } from "../utils/ApiRoute";
-import { DiVim } from "react-icons/di";
 
-const ChatContainer = ({ currentChat, currentUser }) => {
+const ChatContainer = ({ currentChat, currentUser, socketRef }) => {
   const [message, setMessage] = useState([]);
+  const [arrivalMessage, setArrivalMessage] = useState([]);
+  const scrollRef: RefObject<HTMLDivElement> = useRef();
+
+  useEffect(() => {
+    socketRef.current.emit("test", "testing socket.io");
+  }, []);
+
   useEffect(() => {
     const FetchMessage = async () => {
       const response = await axios.post(AllMessageRoute, {
         from: currentUser._id,
         to: currentChat._id,
       });
-      console.log("chatContainer fetchMessage", response.data.ProjectedMessage);
+      // console.log("chatContainer fetchMessage", response.data.ProjectedMessage);
       setMessage(response.data.ProjectedMessage);
     };
     FetchMessage();
   }, [currentChat]);
 
   const handleMessageSend = async (chat: string) => {
-    console.log("ChatContainer Chat", chat);
     const response = await axios.post(SendMessageRoute, {
       from: currentUser._id,
       to: currentChat._id,
       message: chat,
     });
-    console.log(response.data.msg);
   };
+
+  // autoscroll for new message
+  useEffect(() => {
+    scrollRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [message]);
+
   return (
     <div className="h-[85vh] w-[55vw] rounded-lg ">
       <div className="flex items-center justify-start bg-back gap-4 p-2">
@@ -50,10 +60,11 @@ const ChatContainer = ({ currentChat, currentUser }) => {
               <div
                 key={index}
                 className={`flex items-center ${
-                  ptr?.fromSelf ? "justify-start" : "justify-end"
+                  ptr?.fromSelf ? "justify-end" : "justify-start"
                 }`}
+                ref={scrollRef}
               >
-                <div className="bg-violet-900 rounded-full px-4 py-1">
+                <div className="bg-violet-900 my-1 rounded-full px-4 py-1">
                   {ptr?.message}
                 </div>
               </div>
