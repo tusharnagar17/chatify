@@ -56,18 +56,44 @@ const ChatPage = () => {
   const handleChatChange = (chat) => {
     setCurrentChat(chat);
   };
+  const hideForMobile = () => {
+    setCurrentChat(undefined);
+  };
 
   return (
-    <div className="flex justify-center items-center  h-screen bg-back">
-      <div className="flex items-center justify-start gap-10 text-white  m-2 rounded-3xl p-1 md:p-10 md:w-11/12 bg-front">
-        {/* Sidebar */}
-        <Contacts contacts={contacts} changeChat={handleChatChange} />
-        {/* Chat Bar */}
-        <div className=" rounded-xl">
-          {currentChat === undefined ? (
-            <Welcome username={currentUser?.username} />
+    <div>
+      {/* For web screen above 576px  */}
+      <div className="hidden min-[576px]:block">
+        <div className="flex justify-center md:items-center h-screen bg-first">
+          <div className="flex items-center justify-start gap-10 text-white md:m-2 rounded-3xl p-4  w-[90%] h-[90%] bg-second">
+            {/* Sidebar */}
+            <Contacts contacts={contacts} changeChat={handleChatChange} />
+            {/* Chat Bar */}
+            <div className="rounded-xl flex-1 h-full">
+              {currentChat === undefined ? (
+                <Welcome username={currentUser?.username} />
+              ) : (
+                <ChatContainer
+                  hideForMobile={hideForMobile}
+                  currentChat={currentChat}
+                  currentUser={currentUser}
+                  socketRef={socketRef}
+                />
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+      {/* For mobile screen */}
+      <div className="text-white bg-first block min-[576px]:hidden ">
+        <div className="h-screen bg-second">
+          {currentChat == undefined ? (
+            <div className="h-full">
+              <Contacts contacts={contacts} changeChat={handleChatChange} />
+            </div>
           ) : (
             <ChatContainer
+              hideForMobile={hideForMobile}
               currentChat={currentChat}
               currentUser={currentUser}
               socketRef={socketRef}

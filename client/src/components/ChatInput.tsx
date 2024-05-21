@@ -20,8 +20,9 @@ const ChatInput = ({ sendMessage }) => {
   return (
     <form
       onSubmit={ChatSendMessage}
-      className="relative flex justify-around gap-2 items-center w-100"
+      className="relative flex justify-evenly gap-2 items-center"
     >
+      {/* Emoji selector */}
       <div>
         <BsEmojiSmileFill
           className="text-yellow-200"
@@ -38,15 +39,18 @@ const ChatInput = ({ sendMessage }) => {
           ) : null}
         </div>
       </div>
+      {/* Text Input */}
       <div className="">
         <input
           type="text"
           placeholder="Type your message here!"
           value={msg}
           onChange={(e) => setMsg(e.target.value)}
-          className="bg-back px-10 py-2 md:w-[45vw] rounded-full text-lg"
+          className="bg-back px-10 py-2 md:w-[45vw] h-[100%] rounded-full text-lg"
         />
       </div>
+
+      {/* Submit Button */}
       <button className="bg-violet-500 px-6 py-2 rounded-full" type="submit">
         <IoMdSend size={20} />
       </button>

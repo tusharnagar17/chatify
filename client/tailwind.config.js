@@ -11,11 +11,10 @@ export default {
   theme: {
     extend: {
       colors: {
-        primary: '#FF6A00',
-        secondary: '#4ECDC4',
-        accent: '#2E86AB',
-        back: "#131324",
-        front: "#00000076"
+        first: '#131324', // black
+        second: '#00000076', // lighter
+        third: 'rgba(0,0,0.6)',  // extra lighter
+        accent: 'rgba(127,0,0,255,0.5)', // button
 
       },
   },

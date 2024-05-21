@@ -2,16 +2,25 @@ import React, { RefObject, useEffect, useRef, useState } from "react";
 import ChatInput from "./ChatInput";
 import axios from "axios";
 import { AllMessageRoute, SendMessageRoute } from "../utils/ApiRoute";
+import { IoChevronBackOutline } from "react-icons/io5";
+import { useNavigate } from "react-router-dom";
 
 interface Message {
   fromSelf: boolean;
   message: string;
 }
 
-const ChatContainer = ({ currentChat, currentUser, socketRef }) => {
+const ChatContainer = ({
+  currentChat,
+  currentUser,
+  socketRef,
+  hideForMobile,
+}) => {
   const [message, setMessage] = useState<Message[]>([]);
   const [arrivalMessage, setArrivalMessage] = useState(null);
   const scrollRef: RefObject<HTMLDivElement> = useRef();
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const FetchMessage = async () => {
@@ -65,8 +74,18 @@ const ChatContainer = ({ currentChat, currentUser, socketRef }) => {
   }, [message]);
 
   return (
-    <div className="h-[85vh] w-[55vw] rounded-lg ">
-      <div className="flex items-center justify-start bg-back gap-4 p-2">
+    <div className="flex flex-col gap-2 justify-between h-full bg-back rounded-xl">
+      {/* Receiver header */}
+      <div className="flex items-center h-[10%] justify-start bg-first rounded-xl gap-4 p-2 ">
+        <div
+          className="block md:hidden"
+          onClick={() => {
+            hideForMobile();
+            navigate("/");
+          }}
+        >
+          <IoChevronBackOutline size={40} color="white" />
+        </div>
         <div className="rounded-full">
           <img
             src={`data:image/svg+xml;base64,${currentChat?.avatarImage}`}
@@ -75,7 +94,8 @@ const ChatContainer = ({ currentChat, currentUser, socketRef }) => {
         </div>
         <div className="text-lg font-bold">{currentChat?.username}</div>
       </div>
-      <div className="h-[70vh]  p-2 relative overflow-y-auto">
+      {/* Message container */}
+      <div className="bg-first rounded-xl h-[80%]  p-4 relative overflow-y-auto">
         {message.length < 0 ? (
           <div className="flex items-center justify-center h-full">
             <div className="font-bold text-2xl">No Message! Start typing</div>
@@ -92,8 +112,10 @@ const ChatContainer = ({ currentChat, currentUser, socketRef }) => {
                 ref={scrollRef}
               >
                 <div
-                  className={`bg-violet-900 rounded-xl px-4 py-1 ${
-                    ptr?.fromSelf ? "my-[1px]" : "my-2"
+                  className={` rounded-full max-w-[60%] px-4 py-1 ${
+                    ptr?.fromSelf
+                      ? "my-2 bg-violet-800"
+                      : "bg-violet-600 my-[3px]"
                   }`}
                 >
                   {ptr?.message}
@@ -103,7 +125,8 @@ const ChatContainer = ({ currentChat, currentUser, socketRef }) => {
           })
         )}
       </div>
-      <div className="">
+      {/* ChatInput */}
+      <div className="px-2 bg-first py-2 h-[10%] ">
         <ChatInput sendMessage={handleMessageSend} />
       </div>
     </div>

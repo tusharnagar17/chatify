@@ -79,11 +79,13 @@ const LoginPage = () => {
     <>
       <FormContainer>
         <form
-          className="flex-row md:max-w-sm rounded-3xl m-2 p-4 md:p-10 bg-front"
+          className="bg-second flex-row md:max-w-sm rounded-3xl m-2 p-4 md:p-10 bg-front opacity-80"
           onSubmit={handleSubmit}
         >
           {/* App icons */}
-          <AppIcon />
+          <div className="text-5xl">
+            <AppIcon />
+          </div>
 
           {/* Login form */}
           <input

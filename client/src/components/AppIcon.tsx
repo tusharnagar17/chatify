@@ -2,7 +2,7 @@ import React from "react";
 
 const AppIcon = () => {
   return (
-    <div className="flex justify-center text-white items-center text-5xl font-bold my-10">
+    <div className="flex justify-center text-white items-center font-bold my-8">
       Chatify
     </div>
   );

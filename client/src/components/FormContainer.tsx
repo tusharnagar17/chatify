@@ -2,7 +2,7 @@ import React, { ReactNode } from "react";
 
 const FormContainer = ({ children }: { children: ReactNode }) => {
   return (
-    <div className="flex justify-center items-center h-screen bg-back">
+    <div className="flex bg-first justify-center items-center h-screen bg-back">
       {children}
     </div>
   );

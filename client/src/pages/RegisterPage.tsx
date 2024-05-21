@@ -100,10 +100,13 @@ const RegisterPage = () => {
     <>
       <FormContainer>
         <form
-          className="flex-row md:max-w-sm rounded-3xl m-2 p-4 md:p-10 bg-front"
+          className="flex-row bg-second md:max-w-sm rounded-3xl m-2 p-4 md:p-10 bg-front"
           onSubmit={handleSubmit}
         >
-          <AppIcon />
+          <div className="text-5xl">
+            <AppIcon />
+          </div>
+
           <input
             type="text"
             name="username"
