@@ -5,10 +5,10 @@ import Welcome from "../components/Welcome";
 import ChatContainer from "../components/ChatContainer";
 import axios from "axios";
 import { AllUsersRoute, Host } from "../utils/ApiRoute";
-import { io } from "socket.io-client";
+import { io, Socket } from "socket.io-client";
 
 const ChatPage = () => {
-  const socketRef = useRef();
+  const socketRef = useRef<Socket | null>(null);
   const navigate = useNavigate();
   const [contacts, setContacts] = useState([]);
   const [currentChat, setCurrentChat] = useState(undefined);
@@ -16,17 +16,8 @@ const ChatPage = () => {
 
   // socetRef --> attribute
   useEffect(() => {
-    if (currentUser) {
-      // Initialize the socket connection with auth data
-      socketRef.current = io(Host);
-    }
-
-    return () => {
-      if (socketRef.current) {
-        socketRef.current.disconnect();
-        socketRef.current = null;
-      }
-    };
+    socketRef.current = io(Host);
+    socketRef.current.emit("add-user", currentUser?._id);
   }, [currentUser]);
 
   useEffect(() => {
@@ -74,7 +65,7 @@ const ChatPage = () => {
         {/* Chat Bar */}
         <div className=" rounded-xl">
           {currentChat === undefined ? (
-            <Welcome />
+            <Welcome username={currentUser?.username} />
           ) : (
             <ChatContainer
               currentChat={currentChat}

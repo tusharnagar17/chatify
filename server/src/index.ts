@@ -45,19 +45,27 @@ const io = new SocketIOServer(server, {
 })
 
 
+let onlineUsers = new Map()
+console.log("onlineUsers first", onlineUsers)
 
 io.on("connection", (socket) => {
-  const testData = "this is test data from socket.io"
-    socket.on("test", (data)=> {
-      console.log(`Client message : ${data}`)
-    })
+  
+  // Adding a users to the online users map
+  socket.on("add-user", (userId)=> {
+    onlineUsers.set(userId, socket.id)
     
+    console.log(`User ${userId} connected!`)
+  } )
+
+  socket.on("send-msg", (data)=> {
+    console.log(data)
+    const sendUserSocket = onlineUsers.get(data.to)
     
-    // Handle client disconnection
-  socket.on('disconnect', () => {
-    console.log('Client disconnected:');
-  });
+    console.log('retrieving submit to user OR sendUserSocket', sendUserSocket)
+    if(sendUserSocket) {
+      socket.to(sendUserSocket).emit("msg-receive", data.message)
+    }
+  })
+
 });
-
-
 

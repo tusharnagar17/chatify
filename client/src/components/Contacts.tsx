@@ -26,7 +26,7 @@ const Contacts = ({ contacts, changeChat }) => {
   return (
     <>
       {currentUserImage && currentUsername && (
-        <div className="w-1/3 bg-back rounded-xl p-4 hidden md:block">
+        <div className=" bg-back rounded-xl p-4 hidden md:block">
           <div>
             <AppIcon />
           </div>
@@ -36,7 +36,7 @@ const Contacts = ({ contacts, changeChat }) => {
               return (
                 <div
                   key={index}
-                  className={`flex gap-4 rounded-lg my-2 py-2  justify-start pl-10 items-center ${
+                  className={`flex gap-4 rounded-xl my-2 py-2 justify-start px-4 items-center ${
                     selectedChat == index ? "bg-sky-950" : "bg-back"
                   }`}
                   onClick={() => changeCurrentChat(index, item)}
@@ -53,8 +53,8 @@ const Contacts = ({ contacts, changeChat }) => {
             })}
           </div>
           {/* Curret user */}
-          <div className="flex items-center justify-center px-2 gap-4 my-4">
-            <div className="rounded-full border-4 border-red-400">
+          <div className="flex items-center justify-start px-2 gap-4 my-4">
+            <div className="">
               <img
                 src={`data:image/svg+xml;base64,${currentUserImage}`}
                 className="w-14 h-14 rounded-full "

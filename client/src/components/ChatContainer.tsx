@@ -3,14 +3,15 @@ import ChatInput from "./ChatInput";
 import axios from "axios";
 import { AllMessageRoute, SendMessageRoute } from "../utils/ApiRoute";
 
-const ChatContainer = ({ currentChat, currentUser, socketRef }) => {
-  const [message, setMessage] = useState([]);
-  const [arrivalMessage, setArrivalMessage] = useState([]);
-  const scrollRef: RefObject<HTMLDivElement> = useRef();
+interface Message {
+  fromSelf: boolean;
+  message: string;
+}
 
-  useEffect(() => {
-    socketRef.current.emit("test", "testing socket.io");
-  }, []);
+const ChatContainer = ({ currentChat, currentUser, socketRef }) => {
+  const [message, setMessage] = useState<Message[]>([]);
+  const [arrivalMessage, setArrivalMessage] = useState(null);
+  const scrollRef: RefObject<HTMLDivElement> = useRef();
 
   useEffect(() => {
     const FetchMessage = async () => {
@@ -25,13 +26,39 @@ const ChatContainer = ({ currentChat, currentUser, socketRef }) => {
   }, [currentChat]);
 
   const handleMessageSend = async (chat: string) => {
-    const response = await axios.post(SendMessageRoute, {
+    await axios.post(SendMessageRoute, {
       from: currentUser._id,
       to: currentChat._id,
       message: chat,
     });
+
+    socketRef.current.emit("send-msg", {
+      to: currentChat._id,
+      from: currentUser._id,
+      message: chat,
+    });
+
+    const newMsgs: Message[] = [...message];
+    newMsgs.push({ fromSelf: true, message: chat });
+    setMessage(newMsgs);
   };
 
+  useEffect(() => {
+    if (socketRef.current) {
+      socketRef.current.on("msg-receive", (msg) => {
+        setArrivalMessage({ fromSelf: false, message: msg });
+      });
+    }
+    return () => {
+      if (socketRef.current) {
+        socketRef.current.off("msg-receive");
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    arrivalMessage && setMessage((prev) => [...prev, arrivalMessage]);
+  }, [arrivalMessage]);
   // autoscroll for new message
   useEffect(() => {
     scrollRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -64,7 +91,11 @@ const ChatContainer = ({ currentChat, currentUser, socketRef }) => {
                 }`}
                 ref={scrollRef}
               >
-                <div className="bg-violet-900 my-1 rounded-full px-4 py-1">
+                <div
+                  className={`bg-violet-900 rounded-xl px-4 py-1 ${
+                    ptr?.fromSelf ? "my-[1px]" : "my-2"
+                  }`}
+                >
                   {ptr?.message}
                 </div>
               </div>
