@@ -1,9 +1,13 @@
-import React, { useState } from "react";
+import { FormEvent, useState } from "react";
 import { BsEmojiSmileFill } from "react-icons/bs";
 import { IoMdSend } from "react-icons/io";
 import EmojiPicker, { EmojiClickData } from "emoji-picker-react";
 
-const ChatInput = ({ sendMessage }) => {
+const ChatInput = ({
+  sendMessage,
+}: {
+  sendMessage: (chat: string) => void;
+}) => {
   const [showPicker, setShowPicker] = useState(false);
   const [msg, setMsg] = useState("");
   const handleEmojiClick = (emojiData: EmojiClickData) => {
@@ -12,7 +16,7 @@ const ChatInput = ({ sendMessage }) => {
     message += emojiData?.emoji;
     setMsg(message);
   };
-  const ChatSendMessage = (e) => {
+  const ChatSendMessage = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     sendMessage(msg);
     setMsg("");

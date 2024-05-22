@@ -10,8 +10,13 @@ import { toastOptions } from "../utils/ToastOptions";
 
 const inputClass = `outline-none w-full hover:ring ring-sky-300 rounded-md border-2 border-gray-300 px-2 py-1 my-2`;
 
+interface LoginProps {
+  email: string;
+  password: string;
+}
+
 const LoginPage = () => {
-  const [formValue, setFormValue] = useState({
+  const [formValue, setFormValue] = useState<LoginProps>({
     email: "",
     password: "",
   });
@@ -24,11 +29,11 @@ const LoginPage = () => {
       if (!user == false) {
         navigate("/");
       } else {
-        console.log("unable to redirect");
+        // console.log("unable to redirect");
       }
     };
     RedirectMainPage();
-  }, []);
+  }, [navigate]);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -59,19 +64,24 @@ const LoginPage = () => {
   const handleSubmit = async (event: React.ChangeEvent<HTMLFormElement>) => {
     const { email, password } = formValue;
     event.preventDefault();
-    if (handleInputError()) {
-      const { data } = await axios.post(LoginRoute, {
-        email,
-        password,
-      });
-      if (data?.status == false) {
-        toast.error(data?.message, toastOptions);
+    try {
+      if (handleInputError()) {
+        const { data } = await axios.post(LoginRoute, {
+          email,
+          password,
+        });
+        if (data?.status == false) {
+          toast.error(data?.message, toastOptions);
+        }
+        if (data?.status == true) {
+          toast.info(data?.message, toastOptions);
+          localStorage.setItem("chat-app-user", JSON.stringify(data?.user));
+          navigate("/");
+        }
       }
-      if (data?.status == true) {
-        toast.info(data?.message, toastOptions);
-        await localStorage.setItem("chat-app-user", JSON.stringify(data?.user));
-        navigate("/");
-      }
+    } catch (error) {
+      console.log(error);
+      toast.error("Unable to connect to server! Try again", toastOptions);
     }
   };
 

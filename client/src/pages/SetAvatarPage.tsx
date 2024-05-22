@@ -33,8 +33,12 @@ const SetAvatarPage = () => {
         }
         setAvatar(data);
         setIsLoading(false);
-      } catch (error) {
-        toast.error(error, toastOptions);
+      } catch (error: unknown) {
+        let errorMessage = "Error :";
+        if (error instanceof TypeError) {
+          errorMessage += error.message;
+        }
+        toast.error(errorMessage, toastOptions);
       }
     };
 

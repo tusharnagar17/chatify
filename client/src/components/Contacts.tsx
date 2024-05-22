@@ -1,10 +1,19 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import AppIcon from "./AppIcon";
+import { UserProps } from "../types/interface";
 
-const Contacts = ({ contacts, changeChat }) => {
+const Contacts = ({
+  contacts,
+  changeChat,
+}: {
+  contacts: UserProps[];
+  changeChat: (chat: UserProps) => void;
+}) => {
   const [currentUserImage, setCurrentUserImage] = useState(undefined);
   const [currentUsername, setCurrentUsername] = useState(undefined);
-  const [selectedChat, setSelectedChat] = useState(undefined);
+  const [selectedChat, setSelectedChat] = useState<number | undefined>(
+    undefined
+  );
 
   useEffect(() => {
     const saveData = async () => {
@@ -18,7 +27,7 @@ const Contacts = ({ contacts, changeChat }) => {
     saveData();
   }, []);
 
-  const changeCurrentChat = (index, item) => {
+  const changeCurrentChat = (index: number, item: UserProps) => {
     setSelectedChat(index);
     changeChat(item);
   };
@@ -32,7 +41,7 @@ const Contacts = ({ contacts, changeChat }) => {
           </div>
           {/* Users List */}
           <div className="rounded-xl flex-1  bg-second p-4 overflow-y-auto scrollbar scrollbar-thumb-rose-500 scrollbar-track-slate-700">
-            {contacts.map((item, index) => {
+            {contacts.map((item: UserProps, index: number) => {
               return (
                 <div
                   key={index}

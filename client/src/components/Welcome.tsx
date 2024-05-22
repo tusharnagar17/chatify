@@ -1,5 +1,3 @@
-import React from "react";
-
 const Welcome = ({ username }: { username: string }) => {
   return (
     <div className="flex items-center justify-center left-0 right-0 w-3xl mx-atuo">

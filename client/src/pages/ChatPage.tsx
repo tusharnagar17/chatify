@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Contacts from "../components/Contacts";
 import Welcome from "../components/Welcome";
@@ -6,13 +6,18 @@ import ChatContainer from "../components/ChatContainer";
 import axios from "axios";
 import { AllUsersRoute, Host } from "../utils/ApiRoute";
 import { io, Socket } from "socket.io-client";
+import { UserProps } from "../types/interface";
 
 const ChatPage = () => {
   const socketRef = useRef<Socket | null>(null);
   const navigate = useNavigate();
-  const [contacts, setContacts] = useState([]);
-  const [currentChat, setCurrentChat] = useState(undefined);
-  const [currentUser, setCurrentUser] = useState(undefined);
+  const [contacts, setContacts] = useState<UserProps[]>([]);
+  const [currentChat, setCurrentChat] = useState<UserProps | undefined>(
+    undefined
+  );
+  const [currentUser, setCurrentUser] = useState<UserProps | undefined>(
+    undefined
+  );
 
   // socetRef --> attribute
   useEffect(() => {
@@ -32,7 +37,7 @@ const ChatPage = () => {
       }
     };
     fetchCurrentUser();
-  }, []);
+  });
 
   useEffect(() => {
     const CheckAvatar = async () => {
@@ -51,9 +56,9 @@ const ChatPage = () => {
       }
     };
     CheckAvatar();
-  }, [currentUser]);
+  }, [currentUser, navigate]);
 
-  const handleChatChange = (chat) => {
+  const handleChatChange = (chat: UserProps) => {
     setCurrentChat(chat);
   };
   const hideForMobile = () => {
@@ -71,7 +76,7 @@ const ChatPage = () => {
             {/* Chat Bar */}
             <div className="rounded-xl flex-1 h-full">
               {currentChat === undefined ? (
-                <Welcome username={currentUser?.username} />
+                <Welcome username={currentUser?.username || ""} />
               ) : (
                 <ChatContainer
                   hideForMobile={hideForMobile}

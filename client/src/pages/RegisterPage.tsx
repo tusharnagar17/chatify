@@ -37,7 +37,7 @@ const RegisterPage = () => {
       }
     };
     RedirectMainPage();
-  }, []);
+  });
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -85,7 +85,6 @@ const RegisterPage = () => {
         email,
         password,
       });
-      console.log("data", data);
       if (data?.status === true) {
         await localStorage.setItem("chat-app-user", JSON.stringify(data?.user));
         toast.info(data?.message, toastOptions);
