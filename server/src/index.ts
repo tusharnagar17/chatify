@@ -1,16 +1,16 @@
-import express from 'express';
+import express, {Express, Request, Response} from 'express';
 import cors from "cors"
 import dotenv from "dotenv"
 import mongoose from 'mongoose';
 import {Server as SocketIOServer} from "socket.io"
 
-const app = express();
+const app: Express = express();
 
 dotenv.config()
 
 // ROUTES
-import authRoute from "../routes/authRoute"
-import messageRoute from "../routes/messageRoute"
+import authRoute from "./routes/authRoute"
+import messageRoute from "./routes/messageRoute"
 
 const port = process.env.PORT;
 const uri: string = process.env.MONGO_URL || ""
@@ -24,7 +24,7 @@ mongoose.connect(uri).then(()=> {
 }).catch(error => {console.log("mongoose connection failed!", error)})
 
 
-app.get('/ping', (req, res) => {
+app.get('/ping', (_req:Request, res:Response) => {
   res.json({message: "Successfully pinged!"});
 });
 
@@ -44,12 +44,9 @@ const io = new SocketIOServer(server, {
   }
 })
 
-
-let onlineUsers = new Map()
-console.log("onlineUsers first", onlineUsers)
+const onlineUsers = new Map()  
 
 io.on("connection", (socket) => {
-  
   // Adding a users to the online users map
   socket.on("add-user", (userId)=> {
     onlineUsers.set(userId, socket.id)

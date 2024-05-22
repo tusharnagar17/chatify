@@ -1,10 +1,10 @@
 import { Request, Response, NextFunction } from "express";
-import User from "../model/userModel"
+import User from "../model/userModel";
 import bcrypt from "bcrypt"
 import mongoose from "mongoose";
 
-
-export const login = async (req, res, next) => {
+  // @ts-ignore: Ignore TypeScript error on the next line
+export const login = async (req:Request, res:Response, next:NextFunction) => {
     try {
         const {email, password} = req.body;
         
@@ -17,19 +17,25 @@ export const login = async (req, res, next) => {
 
             const userResponse = await User.findById(emailCheck._id).select("username _id avatarImage isAvatarImageSet")
             
-            return res.json({status: true , message: "Email and password match", user: userResponse})
+            return res.status(200).json({status: true , message: "Email and password match", user: userResponse})
 
         }else{
             
-            return res.json({status: false, message: "Incorrect Email and Password!"})
+            return res.status(401).json({status: false, message: "Incorrect Email and Password!"})
         }
-    } catch (error) {
+    } catch (error:unknown) {
+        let errorMessage = ""
+        if(error instanceof TypeError){
+            errorMessage +=error.message
+        }
+        res.status(500).json({ status: false, message: "An error occurred", error: errorMessage });
         next(error)
     }
 }
 
 // register
-export const register = async (req, res, next) => {
+  // @ts-ignore: Ignore TypeScript error on the next line
+export const register = async (req:Request, res:Response, next:NextFunction) => {
     try {
         const {username, email, password} = req.body;
         // check duplicate username
@@ -53,11 +59,17 @@ export const register = async (req, res, next) => {
        
         return res.json({status: true, user: userResponse, message: "Successfully created account!"})
     } catch (error) {
+        let errorMessage = ""
+        if(error instanceof TypeError){
+            errorMessage +=error.message
+        }
+        res.status(500).json({ status: false, message: "An error occurred", error: errorMessage });
         next(error)
     }
 }
 
-export const setAvatar = async (req, res, next) => {
+  // @ts-ignore: Ignore TypeScript error on the next line
+export const setAvatar = async (req:Request, res:Response, next:NextFunction) => {
     try {
         const userId = req.params.id
         const image = req.body.image
@@ -70,11 +82,17 @@ export const setAvatar = async (req, res, next) => {
     return res.json({ status: true, user: userResponse })
         
     } catch (error) {
+        let errorMessage = ""
+        if(error instanceof TypeError){
+            errorMessage +=error.message
+        }
+        res.status(500).json({ status: false, message: "An error occurred", error: errorMessage });
         next(error)
     }
 }
 
-export const getAllUsers = async (req, res, next) => {
+  // @ts-ignore: Ignore TypeScript error on the next line
+export const getAllUsers = async (req:Request, res:Response, next:NextFunction) => {
     try {
         const userId = mongoose.Types.ObjectId.createFromHexString(req.params.id)
         
@@ -88,6 +106,11 @@ export const getAllUsers = async (req, res, next) => {
         return res.json({status: true, user: AllUserData})
 
     } catch (error) {
+        let errorMessage = ""
+        if(error instanceof TypeError){
+            errorMessage +=error.message
+        }
+        res.status(500).json({ status: false, message: "An error occurred", error: errorMessage });
         next(error)
     }
     }
