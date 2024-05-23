@@ -3,7 +3,7 @@ import cors from "cors"
 import dotenv from "dotenv"
 import mongoose from 'mongoose';
 import {Server as SocketIOServer} from "socket.io"
-
+import { MONGO_URI } from './utils/config';
 const app: Express = express();
 
 dotenv.config()
@@ -12,20 +12,21 @@ dotenv.config()
 import authRoute from "./routes/authRoute"
 import messageRoute from "./routes/messageRoute"
 
+
+
 const port = process.env.PORT;
-const uri: string = process.env.MONGO_URL || ""
 
 app.use(cors())
 app.use(express.json())
 
 // mongoose setup
-mongoose.connect(uri).then(()=> {
+mongoose.connect(MONGO_URI).then(()=> {
   console.log("Connetec to MongoDB",)
 }).catch(error => {console.log("mongoose connection failed!", error)})
 
 
 app.get('/ping', (_req:Request, res:Response) => {
-  res.json({message: "Successfully pinged!"});
+  res.status(200).json({message: "Successfully pinged!"});
 });
 
 app.use("/api/auth", authRoute)
@@ -66,3 +67,6 @@ io.on("connection", (socket) => {
 
 });
 
+
+
+export default app
