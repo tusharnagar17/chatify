@@ -12,7 +12,7 @@
     "lint:fix": "eslint ./src --fix",
     "start": "cross-env NODE_ENV=production build && build/src/index.js",
     "build": "tsc",
-    "test": "cross-env NODE_ENV=test jest --verbose"
+    "test": "cross-env NODE_ENV=test jest --verbose --"
   },
   "devDependencies": {
     "@babel/preset-typescript": "^7.24.1",

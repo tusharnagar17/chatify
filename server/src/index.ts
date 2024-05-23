@@ -15,8 +15,14 @@ import messageRoute from "./routes/messageRoute"
 
 
 const port = process.env.PORT;
+const corsOptions = {
+  origin: ['http://localhost:3000', 'http://127.0.0.1:5173'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true,
+};
 
-app.use(cors())
+app.use(cors(corsOptions))
 app.use(express.json())
 
 // mongoose setup

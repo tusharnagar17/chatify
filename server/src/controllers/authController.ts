@@ -9,20 +9,22 @@ export const login = async (req:Request, res:Response, next:NextFunction) => {
         const {email, password} = req.body;
         
         const emailCheck = await User.findOne({email}) 
+        console.log(emailCheck)
         
-        const hashedPassword = emailCheck ? await bcrypt.compare(password, emailCheck?.password) : false
         
-
-        if(hashedPassword && emailCheck){
-
-            const userResponse = await User.findById(emailCheck._id).select("username _id avatarImage isAvatarImageSet")
-            
-            return res.status(200).json({status: true , message: "Email and password match", user: userResponse})
-
-        }else{
-            
-            return res.status(401).json({status: false, message: "Incorrect Email and Password!"})
+        if (!emailCheck) {
+            return res.status(401).json({ status: false, message: "Incorrect Email and Password!" });
         }
+
+        const isPasswordValid = await bcrypt.compare(password, emailCheck.password);
+
+        if (!isPasswordValid) {
+            return res.status(401).json({ status: false, message: "Incorrect Email and Password!" });
+        }
+
+        const userResponse = await User.findById(emailCheck._id).select("username _id avatarImage isAvatarImageSet");
+        
+        return res.status(200).json({ status: true, message: "Email and password match", user: userResponse });
     } catch (error:unknown) {
         let errorMessage = ""
         if(error instanceof TypeError){
