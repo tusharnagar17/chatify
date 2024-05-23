@@ -12,8 +12,6 @@ dotenv.config()
 import authRoute from "./routes/authRoute"
 import messageRoute from "./routes/messageRoute"
 
-
-
 const port = process.env.PORT;
 const corsOptions = {
   origin: ['http://localhost:3000', 'http://127.0.0.1:5173'],
