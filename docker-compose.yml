@@ -4,21 +4,17 @@ services:
     build:
       context: ./client
       dockerfile: Dockerfile
-      target: dev
+      target: prod
     ports:
       - "3000:3000"
-    volumes:
-      - ./client:/app
 
   chatify-backend:
     build:
       context: ./server
       dockerfile: Dockerfile
-      target: dev
+      target: prod
     ports:
       - "5000:5000"
     environment:
       - MONGO_URL=${MONGO_URL}
       - PORT=${PORT}
-    volumes:
-      - ./server:/server

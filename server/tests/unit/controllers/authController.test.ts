@@ -1,57 +1,104 @@
-import User from "../../../src/model/userModel";
+import { Request, Response, NextFunction } from "express"
+import User from "../../../src/model/userModel"
+import {login} from "./../../../src/controllers/authController"
 import bcrypt from "bcrypt"
-import { Request, Response, NextFunction } from "express";
-import { login } from "../../../src/controllers/authController";
 
-jest.mock('bcrypt', ()=> ({
-    compare: jest.fn()
-}))
+jest.mock('../../../src/model/userModel');
+jest.mock('bcrypt');
 
-jest.mock("../../../src/model/userModel", ()=> ({
-    findOne: jest.fn(),
-    findById: jest.fn()
-}))
+describe('login', () => {
+    let req: Partial<Request>;
+    let res: Partial<Response>;
+    let next: jest.MockedFunction<NextFunction>;
 
-const mockedReq: Partial<Request> = {};
-const mockedRes: Partial<Response> = {
-    status: jest.fn().mockReturnThis(),
-    json: jest.fn()
-}
-const mockedNext: NextFunction = jest.fn()
+    beforeEach(() => {
+        req = { body: {} };
+        res = {
+            status: jest.fn().mockReturnThis(),
+            json: jest.fn().mockReturnThis(),
+        };
+        next = jest.fn();
+    });
 
-describe("auth controller", ()=> {
-    beforeEach(()=> {
-        jest.clearAllMocks()
-    })
-    test("should return 200 and username and email match", async ()=> {
-        
-        const fakeUser = {
-            _id: 'fakeUserId',
-            username: 'fakeUsername',
-            avatarImage: 'fakeAvatarImage',
+    afterEach(() => {
+        jest.clearAllMocks();
+    });
+
+    it('should return 401 if email is not found', async () => {
+        const email = 'test@example.com';
+        const password = 'password123';
+
+        (User.findOne as jest.Mock).mockResolvedValue(null);
+
+        req.body = { email, password };
+
+        await login(req as Request, res as Response, next);
+
+        expect(res.status).toHaveBeenCalledWith(401);
+        expect(res.json).toHaveBeenCalledWith({ status: false, message: 'Incorrect Email and Password!' });
+    });
+
+    it('should return 401 if password is incorrect', async () => {
+        const email = 'test@example.com';
+        const password = 'password123';
+        const user = { email, password: 'hashedpassword' };
+
+        (User.findOne as jest.Mock).mockResolvedValue(user);
+        (bcrypt.compare as jest.Mock).mockResolvedValue(false);
+
+        req.body = { email, password };
+
+        await login(req as Request, res as Response, next);
+
+        expect(res.status).toHaveBeenCalledWith(401);
+        expect(res.json).toHaveBeenCalledWith({ status: false, message: 'Incorrect Email and Password!' });
+    });
+
+    it('should return 200 if email and password are correct', async () => {
+        const email = 'test@example.com';
+        const password = 'password123';
+        const userId = 'someuserid';
+        const user = {
+            _id: userId,
+            username: 'testuser',
+            avatarImage: 'image.png',
             isAvatarImageSet: true,
-          };
+        };
 
-        // (User.findOne as jest.Mock).mockResolvedValueOnce({email: "fakeemail@com", password: "fakepassword"})
-        // (bcrypt.compare as jest.Mock).mockResolvedValueOnce(true)
-        // (User.findById as jest.Mock).mockResolvedValueOnce()
+        (User.findOne as jest.Mock).mockResolvedValue({ email, password: 'hashedpassword', _id: userId });
+        (bcrypt.compare as jest.Mock).mockResolvedValue(true);
+        (User.findById as jest.Mock).mockResolvedValue(user);
 
-        jest.spyOn(User, 'findOne').mockResolvedValueOnce({ email: 'fake@example.com', password: 'fakeHashedPassword' });
-        (jest.spyOn(bcrypt, 'compare') as jest.Mock).mockResolvedValueOnce(true);
-        jest.spyOn(User, 'findById').mockResolvedValueOnce(fakeUser);
-        
-        mockedReq.body = { email: 'fake@example.com', password: 'fakePassword' };
+        req.body = { email, password };
 
-         await login(mockedReq as Request, mockedRes as Response, mockedNext);
+        await login(req as Request, res as Response, next);
 
-        expect(mockedRes.status).toHaveBeenCalledWith(200)
-        expect(mockedRes.json).toHaveBeenCalledWith({
+    
+        expect(res.status).toHaveBeenCalledWith(200, { 'Content-Type': 'application/json' });
+        expect(res.json).toHaveBeenCalledWith({
             status: true,
             message: 'Email and password match',
-            user: fakeUser,
-          });
-        
-        
+            user: {
+                _id: userId,
+                username: user.username,
+                avatarImage: user.avatarImage,
+                isAvatarImageSet: user.isAvatarImageSet,
+            },
+        });
+    });
 
-    })
-})
+    it('should return 500 if there is a server error', async () => {
+        const email = 'test@example.com';
+        const password = 'password123';
+
+        (User.findOne as jest.Mock).mockRejectedValue(new Error('Database error'));
+
+        req.body = { email, password };
+
+        await login(req as Request, res as Response, next);
+
+        expect(res.status).toHaveBeenCalledWith(500);
+        expect(res.json).toHaveBeenCalledWith({ status: false, message: 'An error occurred', error: 'Database error' });
+        expect(next).toHaveBeenCalled();
+    });
+});
