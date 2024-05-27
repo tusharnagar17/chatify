@@ -1,36 +1,36 @@
-import { useState, useEffect } from "react";
-import AppIcon from "./AppIcon";
-import { UserProps } from "../types/interface";
+import { useState, useEffect } from 'react'
+import AppIcon from './AppIcon'
+import { UserProps } from '../types/interface'
 
 const Contacts = ({
   contacts,
   changeChat,
 }: {
-  contacts: UserProps[];
-  changeChat: (chat: UserProps) => void;
+  contacts: UserProps[]
+  changeChat: (chat: UserProps) => void
 }) => {
-  const [currentUserImage, setCurrentUserImage] = useState(undefined);
-  const [currentUsername, setCurrentUsername] = useState(undefined);
+  const [currentUserImage, setCurrentUserImage] = useState(undefined)
+  const [currentUsername, setCurrentUsername] = useState(undefined)
   const [selectedChat, setSelectedChat] = useState<number | undefined>(
-    undefined
-  );
+    undefined,
+  )
 
   useEffect(() => {
     const saveData = async () => {
       const currentUser = await JSON.parse(
-        localStorage.getItem("chat-app-user") || ""
-      );
+        localStorage.getItem('chat-app-user') || '',
+      )
 
-      setCurrentUserImage(currentUser?.avatarImage);
-      setCurrentUsername(currentUser?.username);
-    };
-    saveData();
-  }, []);
+      setCurrentUserImage(currentUser?.avatarImage)
+      setCurrentUsername(currentUser?.username)
+    }
+    saveData()
+  }, [])
 
   const changeCurrentChat = (index: number, item: UserProps) => {
-    setSelectedChat(index);
-    changeChat(item);
-  };
+    setSelectedChat(index)
+    changeChat(item)
+  }
 
   return (
     <>
@@ -46,7 +46,7 @@ const Contacts = ({
                 <div
                   key={index}
                   className={`flex gap-2 md:gap-4 rounded-xl my-2 py-2 px-4 justify-start items-center ${
-                    selectedChat == index ? "bg-gray-700" : "bg-gray-900"
+                    selectedChat == index ? 'bg-gray-700' : 'bg-gray-900'
                   }`}
                   onClick={() => changeCurrentChat(index, item)}
                 >
@@ -60,7 +60,7 @@ const Contacts = ({
                   {/* Name */}
                   <div className="text-md font-bold">{item?.username}</div>
                 </div>
-              );
+              )
             })}
           </div>
           {/* Curret user */}
@@ -69,6 +69,7 @@ const Contacts = ({
               <img
                 src={`data:image/svg+xml;base64,${currentUserImage}`}
                 className="w-14 h-14 rounded-full "
+                alt="Current User Avatar"
               />
             </div>
             <div className="text-lg font-bold">{currentUsername}</div>
@@ -76,7 +77,7 @@ const Contacts = ({
         </div>
       )}
     </>
-  );
-};
+  )
+}
 
-export default Contacts;
+export default Contacts

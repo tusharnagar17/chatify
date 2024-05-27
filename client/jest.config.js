@@ -10,8 +10,17 @@ export default {
       },
     setupFilesAfterEnv: ["<rootDir>/jest.setup.ts"],
     // coverage
-    coverageReporters: ["text"],
     collectCoverage: false,
-    // collectCoverageFrom: ['src/components/**/*{.ts,.tsx}',  "!**/node_modules/**", '!src/__tests__/**/*.tsx'  ],
+     collectCoverageFrom: [
+       "src/**/*.{js,jsx,ts,tsx}",
+       "!src/**/*.d.ts",
+      "!src/index.tsx" // exclude specific files if needed
+      ],
+     coverageDirectory: "coverage",
+   coverageReporters: ["html", "text"],
+   testMatch: [
+    "**/__tests__/**/*.[jt]s?(x)",
+    "**/?(*.)+(spec|test).[tj]s?(x)"
+  ]
   };
   
