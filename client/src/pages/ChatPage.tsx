@@ -1,69 +1,72 @@
-import { useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import Contacts from "../components/Contacts";
-import Welcome from "../components/Welcome";
-import ChatContainer from "../components/ChatContainer";
-import axios from "axios";
-import { AllUsersRoute, Host } from "../utils/ApiRoute";
-import { io, Socket } from "socket.io-client";
-import { UserProps } from "../types/interface";
+import { useEffect, useRef, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import Contacts from '../components/Contacts'
+import Welcome from '../components/Welcome'
+import ChatContainer from '../components/ChatContainer'
+import axios from 'axios'
+import { AllUsersRoute, Host } from '../utils/ApiRoute'
+import { io, Socket } from 'socket.io-client'
+import { UserProps } from '../types/interface'
 
 const ChatPage = () => {
-  const socketRef = useRef<Socket | null>(null);
-  const navigate = useNavigate();
-  const [contacts, setContacts] = useState<UserProps[]>([]);
+  const socketRef = useRef<Socket | null>(null)
+  const navigate = useNavigate()
+  const [contacts, setContacts] = useState<UserProps[]>([])
   const [currentChat, setCurrentChat] = useState<UserProps | undefined>(
-    undefined
-  );
+    undefined,
+  )
   const [currentUser, setCurrentUser] = useState<UserProps | undefined>(
-    undefined
-  );
+    undefined,
+  )
 
   // socetRef --> attribute
   useEffect(() => {
-    socketRef.current = io(Host);
-    socketRef.current.emit("add-user", currentUser?._id);
-  }, [currentUser]);
+    socketRef.current = io(Host, {
+      reconnectionAttempts: 5, // Limit reconnection attempts to 5
+      reconnectionDelay: 10000, // 2 seconds delay between reconnections
+      reconnectionDelayMax: 5000, // Maximum delay of 5 seconds
+      timeout: 20000, // 20 seconds timeout for connection attempt
+    })
+    socketRef.current.emit('add-user', currentUser?._id)
+  }, [currentUser])
 
   useEffect(() => {
     const fetchCurrentUser = async () => {
-      const userString = localStorage.getItem("chat-app-user");
+      const userString = localStorage.getItem('chat-app-user')
 
       if (!userString) {
-        navigate("/login");
+        navigate('/login')
       } else {
-        const user = await JSON.parse(userString);
-        setCurrentUser(user);
+        const user = await JSON.parse(userString)
+        setCurrentUser(user)
       }
-    };
-    fetchCurrentUser();
-  });
+    }
+    fetchCurrentUser()
+  }, [navigate])
 
   useEffect(() => {
     const CheckAvatar = async () => {
-      console.log("currentUser", currentUser);
-
       if (currentUser) {
         if (currentUser?.isAvatarImageSet) {
           const response = await axios.get(
-            `${AllUsersRoute}/${currentUser?._id}`
-          );
+            `${AllUsersRoute}/${currentUser?._id}`,
+          )
 
-          setContacts(response.data.user);
+          setContacts(response.data.user)
         } else {
-          navigate("/setAvatar");
+          navigate('/setAvatar')
         }
       }
-    };
-    CheckAvatar();
-  }, [currentUser, navigate]);
+    }
+    CheckAvatar()
+  }, [currentUser, navigate])
 
   const handleChatChange = (chat: UserProps) => {
-    setCurrentChat(chat);
-  };
+    setCurrentChat(chat)
+  }
   const hideForMobile = () => {
-    setCurrentChat(undefined);
-  };
+    setCurrentChat(undefined)
+  }
 
   return (
     <div>
@@ -76,7 +79,7 @@ const ChatPage = () => {
             {/* Chat Bar */}
             <div className="rounded-xl flex-1 h-full">
               {currentChat === undefined ? (
-                <Welcome username={currentUser?.username || ""} />
+                <Welcome username={currentUser?.username || ''} />
               ) : (
                 <ChatContainer
                   hideForMobile={hideForMobile}
@@ -107,7 +110,7 @@ const ChatPage = () => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default ChatPage;
+export default ChatPage

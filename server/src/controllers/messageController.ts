@@ -15,12 +15,7 @@ export const AllMessage = async (req: Request, res: Response, next:NextFunction)
         }})
 
         return res.status(200).json({ProjectedMessage})
-    } catch (error:unknown) {
-        let errorMessage = ""
-        if(error instanceof TypeError){
-            errorMessage +=error.message
-        }
-        res.status(500).json({ status: false, message: "An error occurred", error: errorMessage });
+    } catch (error) {
         next(error)
     }
 }
@@ -40,12 +35,8 @@ export const SendMessage = async (req: Request, res: Response<SendMessageBody>, 
         }else {
             return res.status(503).json({status: false, message: "Failed to Send Message!"})
         }
-    } catch (error:unknown) {
-        let errorMessage = ""
-        if(error instanceof TypeError){
-            errorMessage +=error.message
-        }
-        res.status(500).json({ status: false, message: `Error: ${errorMessage}` });
+    } catch (error) {
+        
         next(error)
     }
 }

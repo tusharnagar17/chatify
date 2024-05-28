@@ -12,7 +12,6 @@ const ChatInput = ({
   const [msg, setMsg] = useState('')
   const handleEmojiClick = (emojiData: EmojiClickData) => {
     let message = msg
-    console.log('emojiObject', emojiData?.emoji)
     message += emojiData?.emoji
     setMsg(message)
   }
@@ -50,7 +49,7 @@ const ChatInput = ({
           placeholder="Type your message here!"
           value={msg}
           onChange={(e) => setMsg(e.target.value)}
-          className="bg-back px-10 py-2 md:w-[45vw] h-[100%] rounded-full text-lg"
+          className="bg-back px-10 py-2 md:w-[45vw] h-[100%] rounded-full text-lg text-black"
         />
       </div>
 

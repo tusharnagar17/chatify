@@ -1,70 +1,67 @@
-import { useEffect, useState } from "react";
-import FormContainer from "../components/FormContainer";
-import axios from "axios";
-import { Buffer } from "buffer";
-import { ToastContainer, toast } from "react-toastify";
-import { toastOptions } from "../utils/ToastOptions";
-import { SetAvatarRoute } from "../utils/ApiRoute";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from 'react'
+import FormContainer from '../components/FormContainer'
+import axios from 'axios'
+import { Buffer } from 'buffer'
+import { ToastContainer, toast } from 'react-toastify'
+import { toastOptions } from '../utils/ToastOptions'
+import { SetAvatarRoute } from '../utils/ApiRoute'
+import { useNavigate } from 'react-router-dom'
 
 const SetAvatarPage = () => {
-  const [isLoading, setIsLoading] = useState(true);
-  const [avatar, setAvatar] = useState<string[]>([]);
+  const [isLoading, setIsLoading] = useState(true)
+  const [avatar, setAvatar] = useState<string[]>([])
   const [selectedAvatar, setSelectedAvatar] = useState<undefined | number>(
-    undefined
-  );
-  const navigate = useNavigate();
+    undefined,
+  )
+  const navigate = useNavigate()
 
-  const api = "https://api.multiavatar.com/4567847";
-  const apiKey = "4DAGKFQOHSnbtf";
+  const api = 'https://api.multiavatar.com/4567847'
+  const apiKey = '4DAGKFQOHSnbtf'
 
   useEffect(() => {
-    const data: string[] = [];
+    const data: string[] = []
     const makeAvatar = async () => {
       try {
         for (let i = 0; i < 4; i++) {
           const response = await axios.get(
             `${api}/${Math.round(Math.random() * 1000)}?apikey=${apiKey}`,
-            { responseType: "arraybuffer" }
-          );
+            { responseType: 'arraybuffer' },
+          )
 
-          const buffer = Buffer.from(response.data);
-          data.push(buffer.toString("base64"));
+          const buffer = Buffer.from(response.data)
+          data.push(buffer.toString('base64'))
         }
-        setAvatar(data);
-        setIsLoading(false);
+        setAvatar(data)
+        setIsLoading(false)
       } catch (error: unknown) {
-        let errorMessage = "Error :";
+        let errorMessage = 'Error :'
         if (error instanceof TypeError) {
-          errorMessage += error.message;
+          errorMessage += error.message
         }
-        toast.error(errorMessage, toastOptions);
+        toast.error(errorMessage, toastOptions)
       }
-    };
+    }
 
-    makeAvatar();
-  }, []);
+    makeAvatar()
+  }, [])
 
   const SetAvatarServer = async () => {
     if (selectedAvatar == undefined) {
-      toast.error("Please select an avatar!", toastOptions);
+      toast.error('Please select an avatar!', toastOptions)
     } else {
-      const user = await JSON.parse(
-        localStorage.getItem("chat-app-user") || ""
-      );
+      const user = await JSON.parse(localStorage.getItem('chat-app-user') || '')
       const { data } = await axios.post(`${SetAvatarRoute}/${user._id}`, {
         image: avatar[selectedAvatar],
-      });
+      })
 
       if (data?.status) {
-        console.log("avatar page", user);
-        localStorage.setItem("chat-app-user", JSON.stringify(data?.user));
-        navigate("/");
+        localStorage.setItem('chat-app-user', JSON.stringify(data?.user))
+        navigate('/')
       } else {
-        toast.error("Error setting avatar. Please try again!", toastOptions);
+        toast.error('Error setting avatar. Please try again!', toastOptions)
       }
     }
-  };
+  }
 
   return (
     <>
@@ -72,7 +69,7 @@ const SetAvatarPage = () => {
         <div>
           {isLoading ? (
             <div className="text-white text-5xl">
-              <img src={"/assets/loader.gif"} alt="" />
+              <img src={'/assets/loader.gif'} alt="" />
             </div>
           ) : (
             <div className="text-white rounded-xl px-2 py-6 md:px-10 md:py-18 bg-front max-w-lg">
@@ -89,13 +86,13 @@ const SetAvatarPage = () => {
                         alt="avatar"
                         className={
                           selectedAvatar == index
-                            ? "border-4 rounded-full border-violet-600 h-20 w-20"
-                            : "h-20 w-20"
+                            ? 'border-4 rounded-full border-violet-600 h-20 w-20'
+                            : 'h-20 w-20'
                         }
                         onClick={() => setSelectedAvatar(index)}
                       />
                     </div>
-                  );
+                  )
                 })}
               </div>
               <div className="flex justify-center items-center my-6">
@@ -112,7 +109,7 @@ const SetAvatarPage = () => {
       </FormContainer>
       <ToastContainer />
     </>
-  );
-};
+  )
+}
 
-export default SetAvatarPage;
+export default SetAvatarPage

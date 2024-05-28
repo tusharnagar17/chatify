@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import User from "../model/userModel";
 import bcrypt from "bcrypt"
 import mongoose from "mongoose";
+import logger from "../utils/logger";
 
   // @ts-ignore: Ignore TypeScript error on the next line
 export const login = async (req:Request, res:Response, next:NextFunction) => {
@@ -9,7 +10,7 @@ export const login = async (req:Request, res:Response, next:NextFunction) => {
         const {email, password} = req.body;
         
         const emailCheck = await User.findOne({email}) 
-        console.log(emailCheck)
+        logger.info(emailCheck)
         
         
         if (!emailCheck) {
@@ -25,12 +26,8 @@ export const login = async (req:Request, res:Response, next:NextFunction) => {
         const userResponse = await User.findById(emailCheck._id).select("username _id avatarImage isAvatarImageSet");
         
         return res.status(200).json({ status: true, message: "Email and password match", user: userResponse });
-    } catch (error:unknown) {
-        let errorMessage = ""
-        if(error instanceof TypeError){
-            errorMessage +=error.message
-        }
-        res.status(500).json({ status: false, message: "An error occurred", error: errorMessage });
+    } catch (error) {
+        
         next(error)
     }
 }
@@ -61,11 +58,7 @@ export const register = async (req:Request, res:Response, next:NextFunction) => 
        
         return res.json({status: true, user: userResponse, message: "Successfully created account!"})
     } catch (error) {
-        let errorMessage = ""
-        if(error instanceof TypeError){
-            errorMessage +=error.message
-        }
-        res.status(500).json({ status: false, message: "An error occurred", error: errorMessage });
+        
         next(error)
     }
 }
@@ -84,11 +77,7 @@ export const setAvatar = async (req:Request, res:Response, next:NextFunction) =>
     return res.json({ status: true, user: userResponse })
         
     } catch (error) {
-        let errorMessage = ""
-        if(error instanceof TypeError){
-            errorMessage +=error.message
-        }
-        res.status(500).json({ status: false, message: "An error occurred", error: errorMessage });
+
         next(error)
     }
 }
@@ -108,11 +97,6 @@ export const getAllUsers = async (req:Request, res:Response, next:NextFunction) 
         return res.json({status: true, user: AllUserData})
 
     } catch (error) {
-        let errorMessage = ""
-        if(error instanceof TypeError){
-            errorMessage +=error.message
-        }
-        res.status(500).json({ status: false, message: "An error occurred", error: errorMessage });
         next(error)
     }
     }

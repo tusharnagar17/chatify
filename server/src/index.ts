@@ -11,10 +11,14 @@ dotenv.config()
 // ROUTES
 import authRoute from "./routes/authRoute"
 import messageRoute from "./routes/messageRoute"
+import logger from './utils/logger';
+import errorHandler from './middleware/errorHandler';
 
-const port = process.env.PORT;
+
+const origin = process.env.ORIGIN || ""
+const port = process.env.PORT || 3000; 
 const corsOptions = {
-  origin: ['http://localhost:3000', 'http://127.0.0.1:5173'],
+  origin: origin,
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
@@ -25,25 +29,27 @@ app.use(express.json())
 
 // mongoose setup
 mongoose.connect(MONGO_URI).then(()=> {
-  console.log("Connetec to MongoDB",)
-}).catch(error => {console.log("mongoose connection failed!", error)})
+  logger.info("Conneted to MongoDB")
+}).catch(error => {logger.info("mongoose connection failed!", error)})
 
 
-app.get('/ping', (_req:Request, res:Response) => {
-  res.status(200).json({message: "Successfully pinged!"});
+app.get('/health', (_req:Request, res:Response) => {
+  res.status(200).json({message: "Endpoint /health successfully working !"});
 });
 
 app.use("/api/auth", authRoute)
 app.use("/api/message", messageRoute )
 
+app.use(errorHandler)
+
 const server = app.listen(port, () => {
-  console.log(`Server is running at http://localhost:${port}`);
+  logger.info(`Server is running at http://localhost:${port}`);
 });
 
 // socket.io initialization
 const io = new SocketIOServer(server, {
   cors: {
-    origin: "http://127.0.0.1:5173",
+    origin: origin,
     credentials: true,
     methods: ["GET", "POST"]
   }
@@ -56,14 +62,14 @@ io.on("connection", (socket) => {
   socket.on("add-user", (userId)=> {
     onlineUsers.set(userId, socket.id)
     
-    console.log(`User ${userId} connected!`)
+    logger.info(`User ${userId} connected!`)
   } )
 
   socket.on("send-msg", (data)=> {
-    console.log(data)
+    logger.info(data)
     const sendUserSocket = onlineUsers.get(data.to)
     
-    console.log('retrieving submit to user OR sendUserSocket', sendUserSocket)
+    logger.info('retrieving submit to user OR sendUserSocket', sendUserSocket)
     if(sendUserSocket) {
       socket.to(sendUserSocket).emit("msg-receive", data.message)
     }

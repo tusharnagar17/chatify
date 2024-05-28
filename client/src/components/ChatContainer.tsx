@@ -37,7 +37,6 @@ const ChatContainer = ({
         from: currentUser?._id,
         to: currentChat._id,
       })
-      // console.log("chatContainer fetchMessage", response.data.ProjectedMessage);
       setMessage(response.data.ProjectedMessage)
     }
     FetchMessage()
@@ -115,7 +114,6 @@ const ChatContainer = ({
           </div>
         ) : (
           message.map((ptr, index) => {
-            // console.log("ptr console", ptr);
             return (
               <div
                 key={index}

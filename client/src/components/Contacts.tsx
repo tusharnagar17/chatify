@@ -45,7 +45,7 @@ const Contacts = ({
               return (
                 <div
                   key={index}
-                  className={`flex gap-2 md:gap-4 rounded-xl my-2 py-2 px-4 justify-start items-center ${
+                  className={`flex text-sm lg:text-lg gap-2 md:gap-4 rounded-xl my-2 py-2 px-4 justify-start items-center ${
                     selectedChat == index ? 'bg-gray-700' : 'bg-gray-900'
                   }`}
                   onClick={() => changeCurrentChat(index, item)}
