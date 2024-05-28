@@ -34,7 +34,7 @@ mongoose.connect(MONGO_URI).then(()=> {
 
 
 app.get('/health', (_req:Request, res:Response) => {
-  res.status(200).json({message: "Endpoint /health successfully working !"});
+  res.status(200).json({message: "Endpoint /health successfully!"});
 });
 
 app.use("/api/auth", authRoute)
@@ -49,7 +49,7 @@ const server = app.listen(port, () => {
 // socket.io initialization
 const io = new SocketIOServer(server, {
   cors: {
-    origin: origin,
+    origin: "*",
     credentials: true,
     methods: ["GET", "POST"]
   }
