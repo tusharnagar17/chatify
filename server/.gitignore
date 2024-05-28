@@ -31,4 +31,5 @@ temp.md
 
 coverage
 
+# not upload .env file
 .env

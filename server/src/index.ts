@@ -14,7 +14,6 @@ import messageRoute from "./routes/messageRoute"
 import logger from './utils/logger';
 import errorHandler from './middleware/errorHandler';
 
-
 const origin = process.env.ORIGIN || ""
 const port = process.env.PORT || 3000; 
 const corsOptions = {
@@ -23,6 +22,8 @@ const corsOptions = {
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
 };
+
+console.log(corsOptions)
 
 app.use(cors(corsOptions))
 app.use(express.json())
@@ -43,7 +44,7 @@ app.use("/api/message", messageRoute )
 app.use(errorHandler)
 
 const server = app.listen(port, () => {
-  logger.info(`Server is running at http://localhost:${port}`);
+  logger.info(`Server is running at ${port}`);
 });
 
 // socket.io initialization

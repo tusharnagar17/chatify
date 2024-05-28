@@ -1,0 +1,8 @@
+{
+    "scripts": {
+        "install:client": "yarn --prefix ./client",
+        "install:server": "yarn --prefix ./server",
+        "dev:client": "yarn run dev --prefix ./client",
+        "dev:server": "yarn run dev --prefix ./client"
+    }
+}
